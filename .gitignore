@@ -1,0 +1,17 @@
+.*.swp
+.ipynb_checkpoints/
+client_secret.json
+credentials.json
+labelImg/
+*/images/
+*/model*/
+*/objdetect.*.config
+*/object_detection
+*/object_detection.egg-info/
+*/setup.py
+*/slim
+*/test.record
+*/train.record
+*/dist/
+tensorflow/
+ssd_mobilenet_v1_coco_2018_01_28*

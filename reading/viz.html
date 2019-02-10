@@ -1,0 +1,65 @@
+<html>
+<head>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+google.charts.load('current', {'packages':['corechart']});
+
+function drawChart(rows) {
+    var data = new google.visualization.DataTable();
+    data.addColumn('datetime', 'Date');
+    data.addColumn('number', 'Weight');
+    data.addRows(rows);
+
+    var options = {
+    trendlines: { 0: {} },
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+}
+
+function processInput(txt) {
+    var lines = txt.trim().split('\n');
+
+    var results = [];
+    for (var i = 1; i < lines.length; i++) {
+        var parts = lines[i].trim().split(',');
+
+        var numbers = [];
+        for (var j = 3; j < parts.length; j += 6) {
+            var label = parts[j];
+            if (label === '%') continue
+            numbers.push([parseFloat(parts[j+2]), parseInt(label)]);
+        }
+
+        if (numbers.length != 4) continue
+
+        numbers.sort();
+        var weight = numbers[0][1] * 100 + numbers[1][1] * 10 + numbers[2][1] + numbers[3][1] * 0.1;
+
+        if (weight >= 140) continue
+
+        results.push([new Date(parts[0]), weight]);
+    }
+
+    drawChart(results);
+}
+
+function loadData() {
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", 'detectedbboxes.csv', false);
+    rawFile.onreadystatechange = function () {
+        if(rawFile.readyState === 4) {
+            if(rawFile.status === 200 || rawFile.status == 0) {
+                processInput(rawFile.responseText);
+            }
+        }
+    }
+    rawFile.send(null);
+}
+</script>
+</head>
+<body onload="loadData()">
+    <div id="chart_div"></div>
+</body>
+</html>

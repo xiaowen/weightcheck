@@ -1,0 +1,9 @@
+item {
+  name: "scale"
+  id: 1
+}
+item {
+  name: "reading"
+  id: 2
+}
+
