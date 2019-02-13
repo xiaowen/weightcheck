@@ -1,7 +1,7 @@
 # This doc accompanies the blog post and gives the exact commands to run to train a neural network to recognize scales.
-# You'll have to modify some of this for your situation.
+# DON'T RUN THIS SCRIPT DIRECTLY as there are manual actions required at multiple points; copy & paste as needed
 
-# Before you start, clone this repo to use the scripts referenced here
+# Before starting, clone this repo, if you haven't already done so, to use the scripts referenced here
 git clone https://github.com/xiaowen/weightcheck
 cd weightcheck
 
@@ -17,8 +17,8 @@ sudo apt-get install protobuf-compiler
 
 pip install --user tensorflow tensorboard pillow Cython
 pip install --user contextlib2 lxml jupyter matplotlib pycocotools
-echo $(pwd)/tensorflow/models/research > $HOME/.local/lib/python2.7/site-packages/tf-models-research.pth
-echo $(pwd)/tensorflow/models/research/slim > $HOME/.local/lib/python2.7/site-packages/tf-models-research-slim.pth
+echo $(pwd)/tensorflow/models/research > $HOME/.local/lib/python2.7/site-packages/tf-models-research.pth # adjust for other Python versions
+echo $(pwd)/tensorflow/models/research/slim > $HOME/.local/lib/python2.7/site-packages/tf-models-research-slim.pth # ditto
 
 # Step 2: install gcloud
 # Follow the instructions at https://cloud.google.com/sdk/docs/downloads-apt-get
@@ -26,7 +26,7 @@ gcloud auth application-default login # authenticate to allow this tool to acces
 
 # Step 3: create a Google Cloud Platform (GCP) storage bucket
 # Follow the instructions at https://cloud.google.com/storage/docs/creating-buckets
-YOUR_STORAGE_BUCKET=<the name of your storage bucket> # put the name of your storage bucket into a variable for later use
+YOUR_GCS_BUCKET=<the name of your storage bucket> # put the name of your storage bucket into a variable for later use
 
 # Step 4: upload a pre-trained model
 curl -O http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2018_01_28.tar.gz # from https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
@@ -43,6 +43,7 @@ python ../genrecords.py # uses the CSV file to convert your training data into *
 gsutil cp train.record test.record labels.pbtxt gs://${YOUR_GCS_BUCKET}/data/
 
 # Step 6: bundle up the Tensorflow object detection source code
+pip install --user setuptools
 RESEARCH_DIR=../tensorflow/models/research # update to point to where you cloned the tensorflow models repo 
 ln -s $RESEARCH_DIR/object_detection $RESEARCH_DIR/setup.py $RESEARCH_DIR/slim .
 bash object_detection/dataset_tools/create_pycocotools_package.sh /tmp/pycocotools # creates /tmp/pycocotools/pycocotools-2.0.tar.gz

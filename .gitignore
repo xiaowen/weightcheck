@@ -3,6 +3,8 @@
 client_secret.json
 credentials.json
 labelImg/
+*/annotations.csv
+*/detectedbboxes.csv
 */images/
 */model*/
 */objdetect.*.config
